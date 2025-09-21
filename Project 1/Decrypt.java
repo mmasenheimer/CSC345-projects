@@ -122,36 +122,94 @@ public class Decrypt {
 
     }
 
-        /*
-        * Method: main
-        * Purpose: Reads a deck and encrypted messages from files, converts the deck, and decrypts each message.
-        * Pre-condition: Files "messages.txt" and "test1.txt" exist and contain valid data.
-        * Post-condition: All messages in "messages.txt" are decrypted and printed; scanners are closed.
-        * Return value: None.
-        * Parameters:
-        *   - args (in): Command-line arguments (not used).
-        */
-
-        public static void main (String[] args) throws FileNotFoundException{
-        File inputMessages = new File("messages.txt");
-        File inputDeck = new File("test1.txt");
-
-        Scanner messageScanner = new Scanner(inputMessages);
-        Scanner deckScanner = new Scanner(inputDeck);
-
-        String theDeck = deckScanner.nextLine();
-        Integer[] convertedDeck = ConvertDeck.startConvert(theDeck);
-        // Read and convert deck
-
-        while (messageScanner.hasNextLine()) {
-            // Decrypt each message line
-            String curr = messageScanner.nextLine();
-
-            decrypt(curr, convertedDeck);
+    /*
+     * Method: isValidDeck
+     * Purpose: Checks whether a given deck is valid for encryption.
+     * Pre-condition: The deck array is not null.
+     * Post-condition: Returns true if the deck contains exactly 28 cards, with values 1–28, each exactly once.
+     * Return value: boolean – true if deck is valid, false otherwise.
+     * Parameters:
+     *   - deck (in): Array of Integer representing a deck of cards.
+    */
+    private static boolean isValidDeck(Integer[] deck) {
+        // Must have 28 cards
+        if (deck.length != 28) {
+            return false;
         }
 
-        messageScanner.close();
-        deckScanner.close();
-    
+        // All cards 1-28 exactly once
+        boolean[] found = new boolean[29]; 
+        // index 1-28
+        for (int card : deck) {
+            if (card < 1 || card > 28) return false;
+            if (found[card]) return false; 
+            // There is a duplicate card
+            found[card] = true;
+        }
+        return true;
+    }
+
+    /*
+     * Method: main
+     * Purpose: Reads messages and a deck from files, validates the deck, and deccrypts each message.
+     * Pre-condition: Files specified as command-line arguments exist and contain valid data.
+     * Post-condition: Messages are encrypted and printed to output; scanners are closed.
+     * Return value: None
+     * Parameters:
+     *   - args (in): Command-line arguments: args[0] = messages file, args[1] = deck file.
+    */
+    public static void main(String[] args) {
+
+        File inputDeck = new File(args[0]);
+        File inputMessages = new File(args[1]);
+
+        // Check if files exist
+        if (!inputMessages.exists()) {
+            System.out.println("messages.txt does not exist.");
+            return;
+        }
+        if (!inputDeck.exists()) {
+            System.out.println("deck does not exist.");
+            return;
+        }
+
+        try {
+            Scanner messageScanner = new Scanner(inputMessages);
+            Scanner deckScanner = new Scanner(inputDeck);
+
+            // Read and convert deck
+            if (!deckScanner.hasNextLine()) {
+                System.out.println("Deck file is empty.");
+                deckScanner.close();
+                messageScanner.close();
+                return;
+            }
+
+            String theDeck = deckScanner.nextLine();
+            Integer[] convertedDeck = ConvertDeck.startConvert(theDeck);
+
+            // Validate deck
+            if (!isValidDeck(convertedDeck)) {
+                System.out.println("Deck is invalid.");
+                deckScanner.close();
+                messageScanner.close();
+                return;
+            }
+
+            // Encrypt each message line
+            while (messageScanner.hasNextLine()) {
+                String curr = messageScanner.nextLine();
+                decrypt(curr, convertedDeck);
+            }
+
+            messageScanner.close();
+            deckScanner.close();
+
+        } catch (FileNotFoundException e) {
+            System.out.println("One of the files could not be found.");
+
+        } catch (Exception e) {
+            System.out.println("An unexpected error occurred: " + e.getMessage());
+        }
     }
 }
