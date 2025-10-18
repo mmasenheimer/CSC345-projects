@@ -113,7 +113,6 @@ public class Encrypt {
             }
             finalResultArr[i] = temp;
         }
-
         StringBuilder finalResult = new StringBuilder();
 
         for (int num : finalResultArr) {
@@ -123,10 +122,8 @@ public class Encrypt {
                 finalResult.append(c);
             }
         }
-
         System.out.println(finalResult);
         return deck;
-
     }
 
     /*
