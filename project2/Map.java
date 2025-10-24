@@ -108,6 +108,7 @@ public class Map {
         this.OCCUPIED = this.NUMTERRITORIES - this.VICTIMS;
         this.MAXDICE = maxDice;
         this.players = players;
+        
 
         this.theMap = new Territory[rows][columns];
 
