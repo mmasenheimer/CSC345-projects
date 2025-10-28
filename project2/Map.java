@@ -109,7 +109,6 @@ public class Map {
         this.MAXDICE = maxDice;
         this.players = players;
         
-
         this.theMap = new Territory[rows][columns];
 
         for (int i = 0; i < this.ROWS; i++) {
