@@ -159,10 +159,121 @@ public class Prog3 {
     }
 
     // MY VERSION OF THE MESSAGE OBJECT SORT
-    public static ArrayList<Message> mySort(ArrayList<Message> input ) {
+    public static ArrayList<Message> mySortDate(ArrayList<Message> input) {
 
+        quickSortByDate(input, 0, input.size() - 1, 12);
         return input;
     }
+
+
+    public static void quickSortByDate(ArrayList<Message> input, int low, int high, int insertionSortWhen) {
+
+        if (high - low < insertionSortWhen) {
+            insertionSort(input, low, high);
+            return;
+        }
+
+        if (low < high) {
+            int mid = low + (high - low) / 2;
+            Collections.swap(input, mid, high);
+
+            Message pivotPosition = input.get(high);
+            int curr = low - 1;
+
+            for (int j = low; j < high; j++) {
+                if (input.get(j).compareTo(pivotPosition) <= 0) {
+                    curr++;
+                    Collections.swap(input, curr, j);
+                }
+            }
+
+            Collections.swap(input, curr+1, high);
+            int pivotIndex = curr + 1;
+
+            quickSortByDate(input, low, pivotIndex - 1, insertionSortWhen);
+            quickSortByDate(input, pivotIndex + 1, high, insertionSortWhen);
+
+        }
+    }
+
+    private static void insertionSort(ArrayList<Message> input, int low, int high) {
+        for (int i = low + 1; i <= high; i++) {
+            Message key = input.get(i);
+            int j = i - 1;
+            while (j >= low && input.get(j).compareTo(key) > 0) {
+                input.set(j + 1, input.get(j));
+                j--;
+            }
+            input.set(j + 1, key);
+        }
+    }
+
+    public static ArrayList<Message> mySortSender(ArrayList<Message> input) {
+    if (input.size() <= 1) {
+        return input;
+    }
+    
+    mergeSort(input, 0, input.size() - 1);
+    return input;
+}
+
+private static void mergeSort(ArrayList<Message> input, int left, int right) {
+    if (left < right) {
+        int mid = left + (right - left) / 2;
+        
+        // Sort first and second halves
+        mergeSort(input, left, mid);
+        mergeSort(input, mid + 1, right);
+        
+        // Merge the sorted halves
+        merge(input, left, mid, right);
+    }
+}
+
+private static void merge(ArrayList<Message> input, int left, int mid, int right) {
+    // Create temporary arrays
+    int n1 = mid - left + 1;
+    int n2 = right - mid;
+    
+    ArrayList<Message> leftArray = new ArrayList<>(n1);
+    ArrayList<Message> rightArray = new ArrayList<>(n2);
+    
+    // Copy data to temp arrays
+    for (int i = 0; i < n1; i++) {
+        leftArray.add(input.get(left + i));
+    }
+    for (int j = 0; j < n2; j++) {
+        rightArray.add(input.get(mid + 1 + j));
+    }
+    
+    // Merge the temp arrays back
+    int i = 0, j = 0;
+    int k = left;
+    
+    while (i < n1 && j < n2) {
+        if (leftArray.get(i).getSender().compareTo(rightArray.get(j).getSender()) <= 0) {
+            input.set(k, leftArray.get(i));
+            i++;
+        } else {
+            input.set(k, rightArray.get(j));
+            j++;
+        }
+        k++;
+    }
+    
+    // Copy remaining elements
+    while (i < n1) {
+        input.set(k, leftArray.get(i));
+        i++;
+        k++;
+    }
+    
+    while (j < n2) {
+        input.set(k, rightArray.get(j));
+        j++;
+        k++;
+    }
+}
 
     public static long startTiming () {
         // Taken from the 345 website
@@ -240,7 +351,7 @@ public class Prog3 {
                 startTimeM = startTiming();
                 // Sort by date
 
-                mySort(javaResult);
+                mySortDate(myResult);
 
                 durationM = stopTiming(startTimeM);
 
@@ -265,7 +376,7 @@ public class Prog3 {
                 startTimeM = startTiming();
                 // Sort by date
 
-                Collections.sort(javaResult);
+                mySortSender(myResult);
 
                 durationM = stopTiming(startTimeM);
 
@@ -300,25 +411,33 @@ public class Prog3 {
                     }
                 }
 
+                writerMine.close();
                 writerJava.close();
 
                 System.out.println("""
                                    Sorting time for Java collections.sort:
-                                   Minutes: """ + minutesJ + "\n" + "Seconds: " + secondsJ + "\n\n");
-
-                System.out.println("""
-                                   Sorting time for my sort:
+                                   Minutes: """ + minutesJ + "\n" + "Seconds: " + secondsJ + "\n");
+                
+                if (sortType.equals("date")) {
+                    System.out.println("""
+                                   Sorting time for quicksort/insertion sort threshold:
                                    Minutes: """ + minutesM + "\n" + "Seconds: " + secondsM + "\n");
+
+                }
+                else {
+                    System.out.println("""
+                                   Sorting time for merge sort:
+                                   Minutes: """ + minutesM + "\n" + "Seconds: " + secondsM + "\n");
+
+                }
                 
-                System.out.println("Processed finished\nOutputs written to {input file name-java} and {input file name-mine}");
-                
+                System.out.println("-Process finished-\nOutputs written to " + filePath + "-java" + " and " + filePath + "-mine"+ "\n");
                 
             } catch (IOException e) {
                 System.out.println("ERROR: Could not write to outfile");
             }
 
         } catch (FileNotFoundException e) {
-            // Catch the error if the file is not found
             System.out.println("Error: file not found");
         }
     }
