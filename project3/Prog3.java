@@ -2,15 +2,14 @@ package project3;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Scanner;
 
 public class Prog3 {
 
-    public class dateTime {
+    public static class dateTime {
 
     public int year;
     public int month;
@@ -53,11 +52,12 @@ public class Prog3 {
     }
 }
 
-    public class Message {
+    public static class Message implements Comparable<Message> {
 
         public String sender;
         public dateTime time;
         public String content;
+        public String fullHeader;
 
         public Message(String header, String content) {
             // Accepts a message in its entirety, presumming the sorting info is at the top in the form:
@@ -71,6 +71,7 @@ public class Prog3 {
 
             this.sender = parts[1];
             this.content = content;
+            this.fullHeader = header;
 
             // Parts for date/time (e.g., "Wed Oct 3 11:43:35 2007")
             String monthStr = parts[3];
@@ -102,7 +103,6 @@ public class Prog3 {
             this.time = new dateTime(year, month, day, hour, minute, second);
         }
 
-
         public String getSender() {
             return sender;
         }
@@ -114,11 +114,35 @@ public class Prog3 {
         public String getContent() {
             return content;
         }
+
+        @Override
+        public int compareTo(Message other) {
+            // Compare by date/time
+            if (this.time.year != other.time.year) {
+                return Integer.compare(this.time.year, other.time.year);
+            }
+            if (this.time.month != other.time.month) {
+                return Integer.compare(this.time.month, other.time.month);
+            }
+            if (this.time.day != other.time.day) {
+                return Integer.compare(this.time.day, other.time.day);
+            }
+            if (this.time.hour != other.time.hour) {
+                return Integer.compare(this.time.hour, other.time.hour);
+            }
+            if (this.time.minute != other.time.minute) {
+                return Integer.compare(this.time.minute, other.time.minute);
+            }
+    
+            return Integer.compare(this.time.second, other.time.second);
+    }
     }
 
     public static ArrayList<Message> parseInput(Scanner fileScanner, String sortType) {
 
-        ArrayList<Message> theMessages = new ArrayList<Message>();
+        ArrayList<Message> theMessages = new ArrayList<>();
+        StringBuilder contentBuilder = new StringBuilder();
+        String headerLine = null;
 
         while (fileScanner.hasNextLine()){
 
@@ -127,20 +151,36 @@ public class Prog3 {
 
             if (line.startsWith("From ")) {
 
-                Message curr = new Message(line);
+                if (headerLine != null) {
+                    Message curr = new Message(headerLine, contentBuilder.toString());
+                    theMessages.add(curr);
+                }
 
-                theMessages.add(curr);
+                headerLine = line;
+                contentBuilder = new StringBuilder();
+            }
+            else {
+
+                if (contentBuilder.length() > 0) {
+                    contentBuilder.append("\n");
+                    // preserve the line breaks in the body
+                }
+                contentBuilder.append(line);
             }
 
         }
 
-        return theMessages;
+        if (headerLine != null) {
+            Message curr = new Message(headerLine, contentBuilder.toString());
+            theMessages.add(curr);
+        }
 
+        return theMessages;
 
     }
 
     // Main function for input string parsing
-    public void main(String[] args) {
+    public static void main(String[] args) {
 
         if (args.length < 2) {
             // If there are an invalid number of arguments
@@ -167,9 +207,23 @@ public class Prog3 {
                 return;
             }
 
-            parseInput(scanner, sortType);
+            ArrayList<Message> result = parseInput(scanner, sortType);
 
-            
+            if (sortType.equals("date")) {
+                // Sort by date
+                Collections.sort(result);
+            }
+
+            else if (sortType.equals("sender")) {
+                // Sort by sender
+                Collections.sort(result, new Comparator<Message>() {
+                @Override
+                public int compare(Message m1, Message m2) {
+                    return m1.getSender().compareTo(m2.getSender());
+                }
+            });
+            }
+
         } catch (FileNotFoundException e) {
             // Catch the error if the file is not found
             System.out.println("Error: file not found");
