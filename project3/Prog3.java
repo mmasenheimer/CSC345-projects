@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Scanner;
 
 public class Prog3 {
@@ -179,6 +178,28 @@ public class Prog3 {
 
     }
 
+    // MY VERSION OF THE MESSAGE OBJECT SORT
+    public ArrayList<Message> mySort(ArrayList<Message> input ) {
+        
+        return input;
+    }
+
+    public static long startTiming () {
+        // Taken from the 345 website
+        System.gc();
+        // Collect garbage
+        return System.nanoTime();
+        // Start timing
+    }
+
+    public static double stopTiming (long startingTime) {
+        // Taken from the 345 website
+
+        long elapsedTime = System.nanoTime() - startingTime;
+        return elapsedTime / 1_000_000_000.0;
+        // Return the time in seconds
+    }
+
     // Main function for input string parsing
     public static void main(String[] args) {
 
@@ -210,23 +231,36 @@ public class Prog3 {
             ArrayList<Message> result = parseInput(scanner, sortType);
 
             if (sortType.equals("date")) {
+                long startTime = startTiming();
+
                 // Sort by date
                 Collections.sort(result);
+
+                double duration = stopTiming(startTime);
+
+                int minutes = (int)duration / 60;
+                double seconds = (int)duration % 60 + (duration - (int)duration);
+
+                // Write to outfile
             }
 
             else if (sortType.equals("sender")) {
+                long startTime = startTiming();
                 // Sort by sender
-                Collections.sort(result, new Comparator<Message>() {
-                @Override
-                public int compare(Message m1, Message m2) {
-                    return m1.getSender().compareTo(m2.getSender());
-                }
-            });
+                Collections.sort(result, (Message m1, Message m2) -> m1.getSender().compareTo(m2.getSender()));
+
+                double duration = stopTiming(startTime);
+
+                int minutes = (int)duration / 60;
+                double seconds = (int)duration % 60 + (duration - (int)duration);
+
+                // Write to outfile
             }
 
         } catch (FileNotFoundException e) {
             // Catch the error if the file is not found
             System.out.println("Error: file not found");
+            return;
         }
 
     }
