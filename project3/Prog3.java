@@ -159,7 +159,7 @@ public class Prog3 {
     }
 
     // MY VERSION OF THE MESSAGE OBJECT SORT
-    public ArrayList<Message> mySort(ArrayList<Message> input ) {
+    public static ArrayList<Message> mySort(ArrayList<Message> input ) {
 
         return input;
     }
@@ -183,11 +183,17 @@ public class Prog3 {
     // Main function for input string parsing
     public static void main(String[] args) {
 
-        args = new String[] {"C:\\Users\\mmase\\OneDrive\\Semester 5\\CSC 345\\Projects\\project3\\unsortedmbox.mbox", "sender"};
+        args = new String[] {"C:\\Users\\mmase\\OneDrive\\Semester 5\\CSC 345\\Projects\\project3\\output2.mbox", "sender"};
 
-        int minutes = 0;
-        long startTime = 0;
-        double seconds = 0.0;
+        int minutesJ = 0;
+        long startTimeJ = 0;
+        double secondsJ = 0.0;
+        double durationJ = 0;
+
+        int minutesM = 0;
+        long startTimeM = 0;
+        double secondsM = 0.0;
+        double durationM = 0;
 
         if (args.length < 2) {
             // If there are an invalid number of arguments
@@ -216,53 +222,96 @@ public class Prog3 {
             }
 
             ArrayList<Message> javaResult = parseInput(scanner, sortType);
+            ArrayList<Message> myResult = new ArrayList<>(javaResult);
 
             if (sortType.equals("date")) {
-                startTime = startTiming();
-
+                startTimeJ = startTiming();
                 // Sort by date
+
                 Collections.sort(javaResult);
 
-                double duration = stopTiming(startTime);
+                durationJ = stopTiming(startTimeJ);
 
-                minutes = (int)duration / 60;
-                seconds = (int)duration % 60 + (duration - (int)duration);
+                minutesJ = (int)durationJ / 60;
+                secondsJ = (int)durationJ % 60 + (durationJ - (int)durationJ);
 
-                // Write to outfile
+                // MY SORTING ALGORITHM FOR DATE
+
+                startTimeM = startTiming();
+                // Sort by date
+
+                mySort(javaResult);
+
+                durationM = stopTiming(startTimeM);
+
+                minutesM = (int)durationM / 60;
+                secondsM = (int)durationM % 60 + (durationM - (int)durationM);
+
             }
 
             else if (sortType.equals("sender")) {
-                startTime = startTiming();
+                startTimeJ = startTiming();
                 // Sort by sender
+
                 Collections.sort(javaResult, (Message m1, Message m2) -> m1.getSender().compareTo(m2.getSender()));
 
-                double duration = stopTiming(startTime);
+                durationJ = stopTiming(startTimeJ);
 
-                minutes = (int)duration / 60;
-                seconds = (int)duration % 60 + (duration - (int)duration);
+                minutesJ = (int)durationJ / 60;
+                secondsJ = (int)durationJ % 60 + (durationJ - (int)durationJ);
 
-                // Write to outfile
+                // MY SORTING ALGORITHM FOR SENDER
+
+                startTimeM = startTiming();
+                // Sort by date
+
+                Collections.sort(javaResult);
+
+                durationM = stopTiming(startTimeM);
+
+                minutesM = (int)durationM / 60;
+                secondsM = (int)durationM % 60 + (durationM - (int)durationM);
+
             }
 
             try {
                 // Write the files
-                PrintWriter writer = new PrintWriter(new FileWriter(filePath + "-java"));
+                PrintWriter writerJava = new PrintWriter(new FileWriter(filePath + "-java"));
+                PrintWriter writerMine = new PrintWriter(new FileWriter(filePath + "-mine"));
 
                 for (int i = 0; i < javaResult.size(); i++) {
-                    Message msg = javaResult.get(i);
-                    writer.println(msg.getHeader());
-                    writer.print(msg.getContent());
+
+                    Message msgJ = javaResult.get(i);
+                    Message msgM = myResult.get(i);
+
+                    writerJava.println(msgJ.getHeader());
+                    writerJava.print(msgJ.getContent());
+
+                    writerMine.println(msgM.getHeader());
+                    writerMine.print(msgM.getContent());
     
                     if (i < javaResult.size() - 1) {
-                        writer.println();  // Only print blank line if not the last message
+                        writerJava.println();  // Only print blank line if not the last message
+                        writerMine.println();
+                    }
+                    else {
+                        writerJava.println();
+                        writerMine.println();
                     }
                 }
 
-                writer.close();
+                writerJava.close();
 
                 System.out.println("""
                                    Sorting time for Java collections.sort:
-                                   Minutes: """ + minutes + "\n" + "Seconds: " + seconds + "\n\n");
+                                   Minutes: """ + minutesJ + "\n" + "Seconds: " + secondsJ + "\n\n");
+
+                System.out.println("""
+                                   Sorting time for my sort:
+                                   Minutes: """ + minutesM + "\n" + "Seconds: " + secondsM + "\n");
+                
+                System.out.println("Processed finished\nOutputs written to {input file name-java} and {input file name-mine}");
+                
                 
             } catch (IOException e) {
                 System.out.println("ERROR: Could not write to outfile");
