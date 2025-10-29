@@ -1,0 +1,92 @@
+From charlie@test.org Mon Oct 2 09:15:42 2023
+Return-Path: <charlie@test.org>
+From: Charlie Brown <charlie@test.org>
+To: team@example.com
+Subject: Weekend Plans
+Date: Mon, 2 Oct 2023 09:15:42 -0700
+Message-ID: <xyz789@test.org>
+
+Hey everyone,
+
+Anyone interested in hiking this weekend?
+
+Charlie
+
+From frank@domain.io Mon Oct 2 22:10:05 2023
+Return-Path: <frank@domain.io>
+From: Frank Lee <frank@domain.io>
+To: all@company.net
+Subject: System Maintenance
+Date: Mon, 2 Oct 2023 22:10:05 -0700
+Message-ID: <maint001@domain.io>
+
+The system will be down for maintenance tonight from 11 PM to 2 AM.
+
+Frank
+
+From eve@mail.com Tue Oct 3 08:30:21 2023
+Return-Path: <eve@mail.com>
+From: Eve Johnson <eve@mail.com>
+To: alice@example.com
+Subject: Re: Project Update
+Date: Tue, 3 Oct 2023 08:30:21 -0700
+Message-ID: <proj999@mail.com>
+MIME-Version: 1.0
+Content-Type: multipart/alternative;
+	boundary="----=_Boundary_ABC123"
+
+------=_Boundary_ABC123
+Content-Type: text/plain
+
+Thanks for the update on the project.
+
+------=_Boundary_ABC123
+Content-Type: text/html
+
+<html><body>Thanks for the update on the project.</body></html>
+
+------=_Boundary_ABC123--
+
+From dave@company.net Wed Oct 4 16:45:33 2023
+Return-Path: <dave@company.net>
+From: Dave Wilson <dave@company.net>
+To: support@example.com
+Subject: Bug Report
+Date: Wed, 4 Oct 2023 16:45:33 -0700
+Message-ID: <bug456@company.net>
+Content-Type: text/plain
+
+Found a critical bug in the login system.
+Please investigate ASAP.
+
+>From the error logs, it seems to be a timeout issue.
+
+Thanks,
+Dave
+
+From alice@example.com Thu Oct 5 14:23:15 2023
+Return-Path: <alice@example.com>
+From: Alice Smith <alice@example.com>
+To: bob@example.com
+Subject: Meeting Tomorrow
+Date: Thu, 5 Oct 2023 14:23:15 -0700
+Message-ID: <abc123@example.com>
+
+Hi Bob,
+
+Just wanted to confirm our meeting for tomorrow at 10 AM.
+
+Best,
+Alice
+
+From grace@university.edu Fri Oct 6 11:20:30 2023
+Return-Path: <grace@university.edu>
+From: Grace Chen <grace@university.edu>
+To: students@university.edu
+Subject: Assignment Due Date
+Date: Fri, 6 Oct 2023 11:20:30 -0700
+Message-ID: <assign123@university.edu>
+
+Reminder: The programming assignment is due this Sunday at midnight.
+
+Dr. Chen

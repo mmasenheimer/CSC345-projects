@@ -14,9 +14,7 @@
  * takes an unpredictable number of iterations to stumble upon the correct
  * sequence.  Theoretically, it may never find it.
  */
-package project3;
 
-import java.io.*;
 import java.util.*;
 
 public class T04n01

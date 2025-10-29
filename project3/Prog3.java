@@ -2,6 +2,9 @@ package project3;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Scanner;
@@ -26,29 +29,6 @@ public class Prog3 {
        this.second = second;
     }
 
-    public int getYear() {
-        return year;
-    }
-
-    public int getMonth() {
-        return month;
-    }
-
-    public int getDay() {
-        return day;
-    }
-
-    public int getHour() {
-        return hour;
-    }
-
-    public int getMinute() {
-        return minute;
-    }
-
-    public int getSecond() {
-        return second;
-    }
 }
 
     public static class Message implements Comparable<Message> {
@@ -66,7 +46,7 @@ public class Prog3 {
             // From dana@telia.com  Wed Oct  3 11:35:49 2007
             // From Adolfoinbredblithe@omegadrivers.net  Wed Oct  3 11:43:35 2007
 
-            String[] parts = header.split(" ");
+            String[] parts = header.split("\\s+");
 
             this.sender = parts[1];
             this.content = content;
@@ -81,7 +61,6 @@ public class Prog3 {
             int second = Integer.parseInt(hms[2]);
             int year = Integer.parseInt(parts[6]);
 
-            // Convert month abbreviation to month number
             int month = 1;
             switch (monthStr) {
                 case "Jan" -> month = 1;
@@ -98,7 +77,6 @@ public class Prog3 {
                 case "Dec" -> month = 12;
             }
 
-            // Build LocalDateTime manually
             this.time = new dateTime(year, month, day, hour, minute, second);
         }
 
@@ -112,6 +90,10 @@ public class Prog3 {
 
         public String getContent() {
             return content;
+        }
+
+        public String getHeader() {
+            return fullHeader;
         }
 
         @Override
@@ -166,7 +148,6 @@ public class Prog3 {
                 }
                 contentBuilder.append(line);
             }
-
         }
 
         if (headerLine != null) {
@@ -175,12 +156,11 @@ public class Prog3 {
         }
 
         return theMessages;
-
     }
 
     // MY VERSION OF THE MESSAGE OBJECT SORT
     public ArrayList<Message> mySort(ArrayList<Message> input ) {
-        
+
         return input;
     }
 
@@ -203,6 +183,12 @@ public class Prog3 {
     // Main function for input string parsing
     public static void main(String[] args) {
 
+        args = new String[] {"C:\\Users\\mmase\\OneDrive\\Semester 5\\CSC 345\\Projects\\project3\\unsortedmbox.mbox", "sender"};
+
+        int minutes = 0;
+        long startTime = 0;
+        double seconds = 0.0;
+
         if (args.length < 2) {
             // If there are an invalid number of arguments
             System.out.println("Error: must have 2 arguments in the format format: java MboxSorter <filename> <sortType>");
@@ -215,6 +201,7 @@ public class Prog3 {
         if (!"date".equals(sortType) && !"sender".equals(sortType)) {
             // If the sort arguments do not match the spec
             System.out.println("Error: sort type must be 'date' or 'sender'");
+            return;
         }
 
         try {
@@ -228,41 +215,62 @@ public class Prog3 {
                 return;
             }
 
-            ArrayList<Message> result = parseInput(scanner, sortType);
+            ArrayList<Message> javaResult = parseInput(scanner, sortType);
 
             if (sortType.equals("date")) {
-                long startTime = startTiming();
+                startTime = startTiming();
 
                 // Sort by date
-                Collections.sort(result);
+                Collections.sort(javaResult);
 
                 double duration = stopTiming(startTime);
 
-                int minutes = (int)duration / 60;
-                double seconds = (int)duration % 60 + (duration - (int)duration);
+                minutes = (int)duration / 60;
+                seconds = (int)duration % 60 + (duration - (int)duration);
 
                 // Write to outfile
             }
 
             else if (sortType.equals("sender")) {
-                long startTime = startTiming();
+                startTime = startTiming();
                 // Sort by sender
-                Collections.sort(result, (Message m1, Message m2) -> m1.getSender().compareTo(m2.getSender()));
+                Collections.sort(javaResult, (Message m1, Message m2) -> m1.getSender().compareTo(m2.getSender()));
 
                 double duration = stopTiming(startTime);
 
-                int minutes = (int)duration / 60;
-                double seconds = (int)duration % 60 + (duration - (int)duration);
+                minutes = (int)duration / 60;
+                seconds = (int)duration % 60 + (duration - (int)duration);
 
                 // Write to outfile
+            }
+
+            try {
+                // Write the files
+                PrintWriter writer = new PrintWriter(new FileWriter(filePath + "-java"));
+
+                for (int i = 0; i < javaResult.size(); i++) {
+                    Message msg = javaResult.get(i);
+                    writer.println(msg.getHeader());
+                    writer.print(msg.getContent());
+    
+                    if (i < javaResult.size() - 1) {
+                        writer.println();  // Only print blank line if not the last message
+                    }
+                }
+
+                writer.close();
+
+                System.out.println("""
+                                   Sorting time for Java collections.sort:
+                                   Minutes: """ + minutes + "\n" + "Seconds: " + seconds + "\n\n");
+                
+            } catch (IOException e) {
+                System.out.println("ERROR: Could not write to outfile");
             }
 
         } catch (FileNotFoundException e) {
             // Catch the error if the file is not found
             System.out.println("Error: file not found");
-            return;
         }
-
     }
-    
 }
