@@ -366,6 +366,7 @@ public class Prog3 {
             // which must be done outside of the loop, since contentBuilder is finished
         }
 
+        fileScanner.close();
         return theMessages;
     }
 
@@ -569,7 +570,7 @@ public class Prog3 {
      *  element of the array.
     */
 
-    private static void merge(ArrayList<Message> input, int left, int mid, int right) {
+    public static void merge(ArrayList<Message> input, int left, int mid, int right) {
        
         int newOne = mid - left + 1;
         int newTwo = right - mid;
@@ -598,16 +599,17 @@ public class Prog3 {
         while (i < newOne && j < newTwo) {
             // Make sure there are elements remaining
 
-            if (leftArray.get(i).getSender().compareTo(rightArray.get(j).getSender()) <= 0) {
-                // Compare sender names from left and right sub arrays
+            int senderComparison = leftArray.get(i).getSender().compareTo(rightArray.get(j).getSender());
+
+            if (senderComparison < 0 || (senderComparison == 0 && leftArray.get(i).compareTo(rightArray.get(j)) <= 0)) {
                 input.set(k, leftArray.get(i));
                 i++;
-                // Left array incr
-            } 
+                // Left array -- sender is earlier alphabetically or it's the same sender but earlier date
+            }
             else {
                 input.set(k, rightArray.get(j));
                 j++;
-                // Right array incr
+                // Right array incro
             }
             k++;
         }
